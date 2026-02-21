@@ -1,3 +1,4 @@
+import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import {
@@ -21,9 +22,11 @@ export default function LoginScreen() {
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+
   const validate = () => {
     const newErrors = {};
- 
+
     // Email validation
     if (!email.trim()) {
       newErrors.email = 'Email is required';
@@ -89,14 +92,27 @@ export default function LoginScreen() {
 
           <View style={styles.inputGroup}>
             <Text style={styles.label}>Password</Text>
-            <TextInput
-              style={[styles.input, errors.password ? styles.inputError : null]}
-              placeholder="Enter your password"
-              placeholderTextColor="#9ca3af"
-              value={password}
-              onChangeText={(text) => { setPassword(text); setErrors((e) => ({ ...e, password: undefined })); }}
-              secureTextEntry
-            />
+            <View style={[styles.passwordContainer, errors.password ? styles.inputError : null]}>
+              <TextInput
+                style={styles.passwordInput}
+                placeholder="Enter your password"
+                placeholderTextColor="#9ca3af"
+                value={password}
+                onChangeText={(text) => { setPassword(text); setErrors((e) => ({ ...e, password: undefined })); }}
+                secureTextEntry={!showPassword}
+              />
+              <TouchableOpacity
+                style={styles.eyeButton}
+                onPress={() => setShowPassword((prev) => !prev)}
+                activeOpacity={0.7}
+              >
+                <Ionicons
+                  name={showPassword ? 'eye-off-outline' : 'eye-outline'}
+                  size={20}
+                  color={COLORS.gray}
+                />
+              </TouchableOpacity>
+            </View>
             {errors.password ? <Text style={styles.errorText}>{errors.password}</Text> : null}
           </View>
 
@@ -151,6 +167,28 @@ const styles = StyleSheet.create({
     borderWidth: 1.5, borderColor: COLORS.border, borderRadius: 10,
     paddingHorizontal: 14, paddingVertical: 12, fontSize: 15,
     color: COLORS.black, backgroundColor: COLORS.background,
+  },
+  // Password field with eye icon
+  passwordContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderWidth: 1.5,
+    borderColor: COLORS.border,
+    borderRadius: 10,
+    backgroundColor: COLORS.background,
+  },
+  passwordInput: {
+    flex: 1,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    fontSize: 15,
+    color: COLORS.black,
+  },
+  eyeButton: {
+    paddingHorizontal: 12,
+    paddingVertical: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   inputError: { borderColor: COLORS.error },
   errorText: { color: COLORS.error, fontSize: 12, marginTop: 4 },
